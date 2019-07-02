@@ -1,26 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import DE1 from "de1";
+import "./App.css";
+
+const de1 = new DE1();
 
 const App: React.FC = () => {
+  de1.isConnected().then(issit => {
+    console.log("DE1 is currently connected?", issit);
+  });
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          onClick={async () => {
+            try {
+              console.log("Connecting to DE1...");
+              await de1.connect();
+              console.log("connected!");
+            } catch (error) {
+              console.error(error);
+            }
+          }}
         >
-          Learn React
-        </a>
+          Connect to DE1
+        </button>
       </header>
     </div>
   );
-}
+};
 
 export default App;
