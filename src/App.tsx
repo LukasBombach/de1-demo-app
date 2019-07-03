@@ -15,7 +15,7 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <header className="App-header">
-        {connected ? "connected" : "disconnected"}
+        <p>{connected ? "connected" : "disconnected"}</p>
         <button
           disabled={connecting || connected}
           onClick={async () => {
