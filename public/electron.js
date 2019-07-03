@@ -21,7 +21,14 @@ app.on("window-all-closed", () => (!isDarwin ? app.quit() : null));
 app.on("activate", () => (mainWindow ? createWindow() : null));
 
 async function createWindow() {
-  mainWindow = new BrowserWindow({ width: 900, height: 700, icon });
+  mainWindow = new BrowserWindow({
+    width: 900,
+    height: 700,
+    icon,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  });
   await installExtension(REACT_DEVELOPER_TOOLS);
   mainWindow.loadURL(isDev ? devUrl : prodUrl);
   if (isDev) mainWindow.webContents.openDevTools();
