@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import DE1 from "de1";
 import "./App.css";
 
@@ -9,22 +9,33 @@ const App: React.FC = () => {
     console.log("DE1 is currently connected?", issit);
   });
 
+  const [connecting, setConnecting] = useState(false);
+  const [connected, setConnected] = useState(false);
+
   return (
     <div className="App">
       <header className="App-header">
+        {connected ? "connected" : "disconnected"}
         <button
+          disabled={connecting || connected}
           onClick={async () => {
             try {
-              console.log("Connecting to DE1...");
+              setConnecting(true);
               await de1.connect();
-              console.log("connected!");
+              setConnected(await de1.isConnected());
+              setConnecting(false);
             } catch (error) {
+              setConnecting(false);
               console.error(error);
             }
           }}
         >
-          Connect to DE1
-        </button>
+          {connecting
+            ? "Connecting..."
+            : connected
+            ? "Connected"
+            : "Connect to DE1"}
+        </button>{" "}
       </header>
     </div>
   );
