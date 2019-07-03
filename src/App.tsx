@@ -4,37 +4,38 @@ import "./App.css";
 
 const de1 = new DE1();
 
-const App: React.FC = () => {
-  de1.isConnected().then(issit => {
-    console.log("DE1 is currently connected?", issit);
-  });
+function useDe1Connection(): [boolean, () => Promise<void>] {
+  const [isConnected, setIsConnected] = useState(false);
+  const connect = async () => {
+    await de1.connect();
+    const newIsConnected = await de1.isConnected();
+    setIsConnected(newIsConnected);
+  };
+  return [isConnected, connect];
+}
 
-  const [connecting, setConnecting] = useState(false);
-  const [connected, setConnected] = useState(false);
+// function useDe1State() {}
+
+const App: React.FC = () => {
+  const [isConnected, connect] = useDe1Connection();
+
+  console.log("Is DE1 currently connected?", isConnected);
 
   return (
     <div className="App">
       <header className="App-header">
-        <p>{connected ? "connected" : "disconnected"}</p>
+        <p>{isConnected ? "connected" : "disconnected"}</p>
         <button
-          disabled={connecting || connected}
+          disabled={isConnected}
           onClick={async () => {
             try {
-              setConnecting(true);
-              await de1.connect();
-              setConnected(await de1.isConnected());
-              setConnecting(false);
+              await connect();
             } catch (error) {
-              setConnecting(false);
               console.error(error);
             }
           }}
         >
-          {connecting
-            ? "Connecting..."
-            : connected
-            ? "Connected"
-            : "Connect to DE1"}
+          {isConnected ? "Connected" : "Connect to DE1"}
         </button>{" "}
       </header>
     </div>
