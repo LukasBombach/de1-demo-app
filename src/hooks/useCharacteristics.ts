@@ -1,40 +1,36 @@
 import { useState } from "react";
-import { CharacteristicKeys, CharacteristicValues } from "de1";
+import de1, {
+  CharacteristicKeys as Keys,
+  CharacteristicValues as Values
+} from "de1";
 
-export type Characteristics<K extends CharacteristicKeys> = Record<
-  K,
-  CharacteristicValues<K>
+export type Characteristics<K extends Keys> = Record<K, Values<K>>;
+export type CharacteristicsSetter<T extends Keys> = React.Dispatch<
+  React.SetStateAction<Characteristics<T>>
 >;
-export type CharacteristicsSetter<
-  T extends CharacteristicKeys
-> = React.Dispatch<React.SetStateAction<Characteristics<T>>>;
 
-export default function useCharacteristics<T extends CharacteristicKeys>(
+export default function useCharacteristics<T extends Keys>(
   ...names: T[]
 ): [Characteristics<T>, CharacteristicsSetter<T>] {
-  const initialChcrs = getInitialCharacteristics(names);
-  const [characteristics, setCharacteristics] = useState(initialChcrs);
-
+  const [characteristics, setCharacteristics] = useState(init(names));
+  read(names, setCharacteristics);
+  sub(names, setCharacteristics);
   return [characteristics, setCharacteristics];
 }
 
-function getInitialCharacteristics<T extends CharacteristicKeys>(
-  names: T[]
-): Characteristics<T> {
-  return names.reduce<Characteristics<T>>(
-    (characteristics, name) => ({ ...characteristics, [name]: undefined }),
-    {} as Characteristics<T>
-  );
+function init<T extends Keys>(names: T[]): Characteristics<T> {
+  const initChrcs = {} as Characteristics<T>;
+  return names.reduce((chcrs, n) => ({ ...chcrs, [n]: undefined }), initChrcs);
 }
 
-/* (async () => {
-      try {
-        console.log("querying state");
-        const state = await de1.get("state");
-        const water = await de1.get("water");
-        console.log("state", state);
-        console.log("water", water);
-      } catch (error) {
-        console.error(error);
-      }
-    })(); */
+async function read<T extends Keys>(names: T[], set: CharacteristicsSetter<T>) {
+  for (const name of names) {
+    set({ [name]: await de1.get(name) } as Characteristics<T>); // TODO why is there a typecast neccessary
+  }
+}
+
+async function sub<T extends Keys>(names: T[], set: CharacteristicsSetter<T>) {
+  for (const name of names) {
+    de1.on(name, value => set({ [name]: value } as Characteristics<T>)); // TODO why is there a typecast neccessary
+  }
+}
