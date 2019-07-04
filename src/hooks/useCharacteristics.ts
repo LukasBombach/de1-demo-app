@@ -25,12 +25,13 @@ function init<T extends Keys>(names: T[]): Characteristics<T> {
 
 async function read<T extends Keys>(names: T[], set: CharacteristicsSetter<T>) {
   for (const name of names) {
-    set({ [name]: await de1.get(name) } as Characteristics<T>); // TODO why is there a typecast neccessary
+    const value = await de1.get(name);
+    set(prev => ({ ...prev, [name]: value }));
   }
 }
 
 async function sub<T extends Keys>(names: T[], set: CharacteristicsSetter<T>) {
   for (const name of names) {
-    de1.on(name, value => set({ [name]: value } as Characteristics<T>)); // TODO why is there a typecast neccessary
+    de1.on(name, value => set(prev => ({ ...prev, [name]: value })));
   }
 }
