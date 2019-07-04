@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
-import de1 from "de1";
-import { useDe1Connection, useCoffeeSwitch } from "./hooks";
+import { useDe1Connection, useDe1Switch, useDe1Characteristics } from "./hooks";
 import "./App.css";
 
 const { remote } = window.require("electron");
@@ -8,10 +7,14 @@ const { webContents } = remote.getCurrentWindow();
 
 const App: React.FC = () => {
   const [isConnected, isConnecting, connect] = useDe1Connection();
-  const [isSwitchOn, setSwitchOn] = useCoffeeSwitch();
+  const [isSwitchOn, setSwitchOn] = useDe1Switch();
+  const [characteristics] = useDe1Characteristics("state", "water");
 
   if (isConnected) {
-    (async () => {
+    console.log("state", characteristics.state);
+    console.log("water", characteristics.water);
+
+    /* (async () => {
       try {
         console.log("querying state");
         const state = await de1.get("state");
@@ -21,7 +24,7 @@ const App: React.FC = () => {
       } catch (error) {
         console.error(error);
       }
-    })();
+    })(); */
   }
 
   const connectBtnRef = useCallback(node => {
