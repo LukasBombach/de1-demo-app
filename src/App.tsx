@@ -1,29 +1,19 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { useConnection, useSwitch, useCharacteristics } from "./hooks";
 import "./App.css";
 
-const { remote } = window.require("electron");
-const { webContents } = remote.getCurrentWindow();
-
 const App: React.FC = () => {
-  const [isConnected, isConnecting, connect] = useConnection();
+  const [connectionState, connect] = useConnection(true);
   const [isSwitchOn, setSwitchOn] = useSwitch();
   const [characteristics] = useCharacteristics("state", "water");
+
+  const isConnected = connectionState === "connected";
+  const isConnecting = connectionState === "connecting";
 
   if (isConnected) {
     console.log("state", characteristics.state);
     console.log("water", characteristics.water);
   }
-
-  const connectBtnRef = useCallback(node => {
-    if (node !== null) {
-      const { left: x, top: y } = node.getBoundingClientRect();
-      const button = "left";
-      const o = { x, y, button };
-      webContents.sendInputEvent(Object.assign({}, o, { type: "mouseDown" }));
-      webContents.sendInputEvent(Object.assign({}, o, { type: "mouseUp" }));
-    }
-  }, []);
 
   return (
     <div className="App">
@@ -34,7 +24,6 @@ const App: React.FC = () => {
           {!isSwitchOn ? "On" : "Off"}
         </button>
         <button
-          ref={connectBtnRef}
           disabled={isConnected || isConnecting}
           onMouseDown={() => connect()}
         >

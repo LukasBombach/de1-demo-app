@@ -24,6 +24,7 @@ function init<T extends Keys>(names: T[]): Characteristics<T> {
 }
 
 async function read<T extends Keys>(names: T[], set: CharacteristicsSetter<T>) {
+  if (!(await de1.isConnected())) return;
   for (const name of names) {
     const value = await de1.get(name);
     set(prev => ({ ...prev, [name]: value }));
@@ -31,6 +32,7 @@ async function read<T extends Keys>(names: T[], set: CharacteristicsSetter<T>) {
 }
 
 async function sub<T extends Keys>(names: T[], set: CharacteristicsSetter<T>) {
+  if (!(await de1.isConnected())) return;
   for (const name of names) {
     de1.on(name, value => set(prev => ({ ...prev, [name]: value })));
   }

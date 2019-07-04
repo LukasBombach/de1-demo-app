@@ -4,10 +4,11 @@
   "private": true,
   "main": "public/electron.js",
   "scripts": {
-    "start": "rescripts start",
+    "start": "concurrently \"BROWSER=none yarn start:cra\" \"wait-on http://localhost:3000 && yarn start:electron\"",
+    "start:electron": "electron .",
+    "start:cra": "rescripts start",
     "build": "rescripts build",
-    "test": "rescripts test",
-    "start:electron": "concurrently \"BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\""
+    "test": "rescripts test"
   },
   "rescripts": [
     "env"
