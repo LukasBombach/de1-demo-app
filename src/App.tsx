@@ -1,14 +1,14 @@
 import React, { useCallback } from "react";
-import { useDe1Connection, useDe1Switch, useDe1Characteristics } from "./hooks";
+import { useConnection, useSwitch, useCharacteristics } from "./hooks";
 import "./App.css";
 
 const { remote } = window.require("electron");
 const { webContents } = remote.getCurrentWindow();
 
 const App: React.FC = () => {
-  const [isConnected, isConnecting, connect] = useDe1Connection();
-  const [isSwitchOn, setSwitchOn] = useDe1Switch();
-  const [characteristics] = useDe1Characteristics("state", "water");
+  const [isConnected, isConnecting, connect] = useConnection();
+  const [isSwitchOn, setSwitchOn] = useSwitch();
+  const [characteristics] = useCharacteristics("state", "water");
 
   if (isConnected) {
     console.log("state", characteristics.state);
