@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
 import de1 from "de1";
-
-const { remote } = window.require("electron");
-const { webContents } = remote.getCurrentWindow();
+import inMouseDownEvent from "./inMouseDownEvent";
 
 export type ConnectionState = "disconnected" | "connected" | "connecting";
-
 type DispatchSetBoolean = React.Dispatch<React.SetStateAction<boolean>>;
 type ConnectFunction = () => Promise<void>;
 
@@ -15,27 +12,13 @@ export default function useConnection(
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const connect = getConnectFn(setIsConnecting, setIsConnected);
-  useEffect(() => {
-    if (initialState === true && !isConnecting) {
-      const div = document.createElement("div");
-      const event = { x: 0, y: 0, button: "left" };
-      div.style.position = "fixed";
-      div.style.top = "0";
-      div.style.left = "0";
-      div.style.width = "1px";
-      div.style.height = "1px";
-      document.body.appendChild(div);
-      div.addEventListener("mousedown", () => {
-        connect();
-        document.body.removeChild(div);
-      });
-      webContents.sendInputEvent(
-        Object.assign({}, event, { type: "mouseDown" })
-      );
-      webContents.sendInputEvent(Object.assign({}, event, { type: "mouseUp" }));
-    }
-  }, [connect, initialState, isConnecting]);
   const connectionState = getConnectionState(isConnecting, isConnected);
+
+  useEffect(() => {
+    if (initialState && !isConnecting && !isConnected)
+      inMouseDownEvent(connect);
+  }, []);
+
   return [connectionState, connect];
 }
 
@@ -45,16 +28,12 @@ function getConnectFn(
 ): ConnectFunction {
   return async () => {
     try {
-      console.log("Trying to connect to DE1...");
       setIsConnecting(true);
       await de1.connect();
       setIsConnecting(false);
-      const newIsConnected = await de1.isConnected();
-      setIsConnected(newIsConnected);
-      console.log("Connection successful");
+      setIsConnected(await de1.isConnected());
     } catch (error) {
       console.error(error.message, error);
-      console.log("Connection failed");
     }
   };
 }
@@ -63,9 +42,7 @@ function getConnectionState(
   isConnecting: boolean,
   isConnected: boolean
 ): ConnectionState {
-  return isConnecting
-    ? "connecting"
-    : isConnected
-    ? "connected"
-    : "disconnected";
+  if (isConnecting) return "connecting";
+  if (isConnected) return "connected";
+  return "disconnected";
 }
