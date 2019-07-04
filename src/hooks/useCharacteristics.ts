@@ -9,7 +9,7 @@ export type CharacteristicsSetter<
   T extends CharacteristicKeys
 > = React.Dispatch<React.SetStateAction<Characteristics<T>>>;
 
-export default function useDe1Characteristics<T extends CharacteristicKeys>(
+export default function useCharacteristics<T extends CharacteristicKeys>(
   ...names: T[]
 ): [Characteristics<T>, CharacteristicsSetter<T>] {
   const initialChcrs = getInitialCharacteristics(names);
@@ -26,3 +26,15 @@ function getInitialCharacteristics<T extends CharacteristicKeys>(
     {} as Characteristics<T>
   );
 }
+
+/* (async () => {
+      try {
+        console.log("querying state");
+        const state = await de1.get("state");
+        const water = await de1.get("water");
+        console.log("state", state);
+        console.log("water", water);
+      } catch (error) {
+        console.error(error);
+      }
+    })(); */

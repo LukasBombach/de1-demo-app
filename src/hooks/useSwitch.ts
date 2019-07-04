@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 const { REACT_APP_HUE_API, REACT_APP_HUE_SECRET } = process.env;
 const switchApi = `${REACT_APP_HUE_API}${REACT_APP_HUE_SECRET}/lights/12`;
 
-export default function useDe1Switch(
+export default function useSwitch(
   initialValue = false
 ): [boolean, (on: boolean) => Promise<void>] {
   const [isSwitchOn, setIsSwitchOn] = useState(initialValue);

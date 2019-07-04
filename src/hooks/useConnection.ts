@@ -1,7 +1,7 @@
 import { useState } from "react";
 import de1 from "de1";
 
-export default function useDe1Connection(): [
+export default function useConnection(): [
   boolean,
   boolean,
   () => Promise<void>

@@ -13,18 +13,6 @@ const App: React.FC = () => {
   if (isConnected) {
     console.log("state", characteristics.state);
     console.log("water", characteristics.water);
-
-    /* (async () => {
-      try {
-        console.log("querying state");
-        const state = await de1.get("state");
-        const water = await de1.get("water");
-        console.log("state", state);
-        console.log("water", water);
-      } catch (error) {
-        console.error(error);
-      }
-    })(); */
   }
 
   const connectBtnRef = useCallback(node => {

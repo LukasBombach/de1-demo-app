@@ -1,3 +1,3 @@
-export { default as useDe1Connection } from "./useDe1Connection";
-export { default as useDe1Characteristics } from "./useDe1Characteristics";
-export { default as useDe1Switch } from "./useDe1Switch";
+export { default as useConnection } from "./useConnection";
+export { default as useCharacteristics } from "./useCharacteristics";
+export { default as useSwitch } from "./useSwitch";
